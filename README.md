@@ -1,3 +1,3 @@
 # rick_and_morty_app
 
-A new Flutter project.
+Test App for Risk and Morty API
