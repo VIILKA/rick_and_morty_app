@@ -86,7 +86,6 @@ class _LocationsScreenState extends State<LocationsScreen> {
     );
   }
 
-  /// Показываем либо Grid, если экран широкий, либо List, если узкий.
   Widget _buildAdaptiveLayout(
     BuildContext context, {
     required List<Location> locations,
@@ -102,7 +101,6 @@ class _LocationsScreenState extends State<LocationsScreen> {
     }
   }
 
-  /// Сетка (2 колонки) для широких экранов
   Widget _buildGrid(
       BuildContext context, List<Location> locations, bool isLoadingPage) {
     return GridView.builder(
@@ -112,11 +110,10 @@ class _LocationsScreenState extends State<LocationsScreen> {
         crossAxisCount: 2,
         crossAxisSpacing: 16,
         mainAxisSpacing: 16,
-        childAspectRatio: 2.5, // настраивайте под желаемые пропорции
+        childAspectRatio: 2.5,
       ),
       itemCount: locations.length + (isLoadingPage ? 1 : 0),
       itemBuilder: (context, index) {
-        // Если это догрузочный элемент
         if (index >= locations.length) {
           return const Center(child: CircularProgressIndicator());
         }
@@ -127,7 +124,6 @@ class _LocationsScreenState extends State<LocationsScreen> {
     );
   }
 
-  /// Вертикальный список для узких экранов
   Widget _buildList(
       BuildContext context, List<Location> locations, bool isLoadingPage) {
     return ListView.builder(
@@ -151,7 +147,6 @@ class _LocationsScreenState extends State<LocationsScreen> {
     );
   }
 
-  /// Карточка локации
   Widget _buildLocationCard(BuildContext context, Location loc) {
     return Card(
       elevation: 3,

@@ -11,11 +11,9 @@ class LocationDetailsScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // 1. Получаем список локаций из BLoC
     final locations =
         context.select((LocationsBloc bloc) => bloc.state.locations);
 
-    // 2. Преобразуем строку в int
     final idInt = int.tryParse(locationId);
     if (idInt == null) {
       return Scaffold(
@@ -25,7 +23,6 @@ class LocationDetailsScreen extends StatelessWidget {
       );
     }
 
-    // 3. Ищем локацию по id
     final loc = locations.firstWhere(
       (l) => l.id == idInt,
       orElse: () => Location(
@@ -39,15 +36,12 @@ class LocationDetailsScreen extends StatelessWidget {
       ),
     );
 
-    // Если не нашли => показываем заглушку
     if (loc.id == -1) {
       return Scaffold(
         appBar: AppBar(title: const Text("Локация не найдена")),
         body: const Center(child: Text("У нас нет данных о такой локации.")),
       );
     }
-
-    // 4. Показываем детальное описание
 
     return Scaffold(
       appBar: AppBar(title: Text(loc.name)),

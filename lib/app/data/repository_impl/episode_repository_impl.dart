@@ -11,14 +11,11 @@ class EpisodeRepositoryImpl implements EpisodeRepository {
 
   @override
   Future<(List<Episode>, bool)> getEpisodes(int page) async {
-    // Делаем запрос
     final response = await remoteDataSource.getEpisodes(page);
     final models = response.results;
 
-    // Преобразуем DTO -> Domain
     final episodeEntities = models.map((m) => m.toEntity()).toList();
 
-    // Проверяем, есть ли следующая страница
     final hasNextPage = (response.info.next != null);
 
     return (episodeEntities, hasNextPage);

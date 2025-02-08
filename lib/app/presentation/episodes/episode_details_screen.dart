@@ -13,10 +13,8 @@ class EpisodeDetailsScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // 1. Достаём список эпизодов из BLoC
     final episodes = context.select((EpisodesBloc bloc) => bloc.state.episodes);
 
-    // 2. Преобразуем episodeId в int
     final idInt = int.tryParse(episodeId);
     if (idInt == null) {
       return Scaffold(
@@ -26,7 +24,6 @@ class EpisodeDetailsScreen extends StatelessWidget {
       );
     }
 
-    // 3. Ищем эпизод по ID (если не нашли - можно отобразить «не найден»)
     final ep = episodes.firstWhere((e) => e.id == idInt);
 
     if (ep.id == -1) {
@@ -36,7 +33,6 @@ class EpisodeDetailsScreen extends StatelessWidget {
       );
     }
 
-    // 4. Показываем детали эпизода
     return Scaffold(
       appBar: AppBar(
         title: Text(ep.name),

@@ -4,7 +4,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:rick_and_morty_app/app/presentation/characters/bloc/characters_bloc.dart';
 
 class CharacterDetailsScreen extends StatelessWidget {
-  final String characterId; // строковый ID из GoRouter
+  final String characterId;
 
   const CharacterDetailsScreen({super.key, required this.characterId});
 
@@ -50,7 +50,6 @@ class CharacterDetailsScreen extends StatelessWidget {
     );
   }
 
-  /// Карточка с изображением персонажа (округлённым) и именем
   Widget _buildAvatarCard(BuildContext context, character) {
     return Card(
       elevation: 4,
@@ -85,7 +84,6 @@ class CharacterDetailsScreen extends StatelessWidget {
     );
   }
 
-  /// Карточка со статусом, расой, гендером
   Widget _buildInfoCard(BuildContext context, character) {
     return Card(
       elevation: 3,
@@ -111,7 +109,6 @@ class CharacterDetailsScreen extends StatelessWidget {
     );
   }
 
-  /// Карточка с локацией и origin
   Widget _buildLocationCard(BuildContext context, character) {
     return Card(
       elevation: 3,
@@ -136,7 +133,6 @@ class CharacterDetailsScreen extends StatelessWidget {
     );
   }
 
-  /// Карточка с датой создания
   Widget _buildCreatedCard(BuildContext context, character) {
     return Card(
       elevation: 3,

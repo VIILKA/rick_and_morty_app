@@ -1,4 +1,3 @@
-/// Info-модель для Rick & Morty API (с полями count, pages, next, prev)
 class InfoModel {
   final int count;
   final int pages;

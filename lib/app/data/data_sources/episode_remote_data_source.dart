@@ -2,7 +2,6 @@ import 'package:dio/dio.dart';
 import '../models/episode_model.dart';
 import '../models/info_model.dart';
 
-/// Результат "страницы" эпизодов
 class PaginatedEpisodesResponse {
   final InfoModel info;
   final List<EpisodeModel> results;

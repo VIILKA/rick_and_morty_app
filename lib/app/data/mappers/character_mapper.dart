@@ -3,8 +3,6 @@ import 'package:rick_and_morty_app/app/data/models/character_model.dart';
 import 'package:rick_and_morty_app/app/domain/entities/character.dart';
 import 'package:rick_and_morty_app/app/domain/entities/character_location.dart';
 
-
-/// Для вложенного поля
 extension CharacterLocationModelMapper on CharacterLocationModel {
   CharacterLocation toEntity() {
     return CharacterLocation(
@@ -14,7 +12,6 @@ extension CharacterLocationModelMapper on CharacterLocationModel {
   }
 }
 
-/// Для основного персонажа
 extension CharacterModelMapper on CharacterModel {
   Character toEntity() {
     return Character(

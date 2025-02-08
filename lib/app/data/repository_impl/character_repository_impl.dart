@@ -5,8 +5,6 @@ import 'package:rick_and_morty_app/app/domain/repositories/character_repository.
 
 import '../data_sources/character_remote_data_source.dart';
 
-/// Реализация репозитория: ходит в remote_data_source, мапит DTO -> Entity.
-/// Содержит методы для постраничной загрузки (getCharacters(page, filter)).
 class CharacterRepositoryImpl implements CharacterRepository {
   final CharacterRemoteDataSource remoteDataSource;
 

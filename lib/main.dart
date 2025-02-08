@@ -25,7 +25,6 @@ class MainApp extends StatelessWidget {
     final dio = Dio(
       BaseOptions(
         validateStatus: (status) {
-          // Принимаем любой код < 500
           return status != null && status < 500;
         },
       ),
@@ -52,7 +51,7 @@ class MainApp extends StatelessWidget {
         themeMode: ThemeMode.system,
         title: 'Rick & Morty with GoRouter',
         debugShowCheckedModeBanner: false,
-        routerConfig: router, // наш GoRouter
+        routerConfig: router,
       ),
     );
   }

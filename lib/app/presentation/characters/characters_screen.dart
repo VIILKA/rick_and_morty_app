@@ -35,7 +35,6 @@ class _CharactersScreenState extends State<CharactersScreen> {
 
   @override
   Widget build(BuildContext context) {
-    // Пример «адаптивности»: если ширина > 600, показываем grid, иначе list.
     final size = MediaQuery.of(context).size;
     final isWide = size.width > 600;
 
@@ -129,7 +128,6 @@ class _CharactersScreenState extends State<CharactersScreen> {
             ),
           );
         } else {
-          // Последний элемент для индикатора, если идёт догрузка
           return const Padding(
             padding: EdgeInsets.all(16),
             child: Center(child: CircularProgressIndicator()),
@@ -145,7 +143,7 @@ class _CharactersScreenState extends State<CharactersScreen> {
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
         crossAxisCount: 2,
-        childAspectRatio: 3, // можете подобрать
+        childAspectRatio: 3,
         mainAxisSpacing: 8,
         crossAxisSpacing: 8,
       ),

@@ -6,7 +6,6 @@ import '../../domain/entities/filters/character_filter.dart';
 import '../../domain/entities/character_enums.dart'
     show characterStatusValues, characterGenderValues, characterSpeciesValues;
 
-/// Эта модель "страничного" ответа
 class PaginatedCharactersResponse {
   final InfoModel info;
   final List<CharacterModel> results;
@@ -52,7 +51,6 @@ class CharacterRemoteDataSource {
         queryParameters: queryParameters,
       );
 
-      // Если код 200 => парсим info+results как раньше
       if (response.statusCode == 200) {
         final data = response.data as Map<String, dynamic>;
         final infoMap = data['info'] as Map<String, dynamic>;
@@ -66,14 +64,10 @@ class CharacterRemoteDataSource {
         return PaginatedCharactersResponse(
             info: info, results: characterModels);
       } else {
-        // Если код не 200 (напр. 404),
-        // проверим, не вернул ли API поле "error"
         final data = response.data;
         if (response.statusCode == 404 &&
             data is Map &&
             data["error"] == "There is nothing here") {
-          // Интерпретируем как ПУСТОЙ результат
-          // Сформируем "пустую" info и results
           final emptyInfo = InfoModel(
             count: 0,
             pages: 1,
@@ -84,13 +78,11 @@ class CharacterRemoteDataSource {
           return PaginatedCharactersResponse(
               info: emptyInfo, results: emptyResults);
         } else {
-          // Иначе бросаем исключение
           throw Exception(
               'Ошибка при загрузке персонажей: ${response.statusCode}');
         }
       }
     } on DioException catch (dioError) {
-      // Сюда попадём, если вообще нет сети или таймаут и т. д.
       throw Exception('Сетевая ошибка: ${dioError.message}');
     }
   }

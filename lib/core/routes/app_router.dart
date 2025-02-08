@@ -24,7 +24,6 @@ final router = GoRouter(
             return NoTransitionPage(child: const CharactersScreen());
           },
           routes: [
-            // Детальная страница персонажа: /characters/details/123
             GoRoute(
               path: 'details/:id',
               builder: (context, state) {
@@ -35,7 +34,6 @@ final router = GoRouter(
           ],
         ),
 
-        /// Episodes
         GoRoute(
           path: '/episodes',
           pageBuilder: (context, state) {
@@ -52,7 +50,6 @@ final router = GoRouter(
           ],
         ),
 
-        /// Locations
         GoRoute(
           path: '/locations',
           pageBuilder: (context, state) {

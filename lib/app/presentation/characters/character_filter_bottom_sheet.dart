@@ -5,7 +5,6 @@ import 'package:rick_and_morty_app/app/domain/entities/filters/character_filter.
 class CharacterFilterBottomSheet extends StatefulWidget {
   final Function(CharacterFilter) onApply;
 
-  /// Текущий фильтр, из которого мы «стартуем».
   final CharacterFilter currentFilter;
 
   const CharacterFilterBottomSheet({
@@ -21,7 +20,6 @@ class CharacterFilterBottomSheet extends StatefulWidget {
 
 class _CharacterFilterBottomSheetState
     extends State<CharacterFilterBottomSheet> {
-  // Поля локального состояния
   String? _name;
   CharacterStatus? _status;
   CharacterSpecies? _species;
@@ -31,12 +29,12 @@ class _CharacterFilterBottomSheetState
   @override
   void initState() {
     super.initState();
-    // Инициализируем локальное состояние из widget.currentFilter
+
     final f = widget.currentFilter;
     _name = f.name;
-    _status = f.status; // null если не выбрано
-    _species = f.species; // null если не выбрано
-    _gender = f.gender; // null если не выбрано
+    _status = f.status;
+    _species = f.species;
+    _gender = f.gender;
     _type = f.type;
   }
 
@@ -80,8 +78,6 @@ class _CharacterFilterBottomSheetState
   }
 
   Widget _buildStatusChips() {
-    // для примера: [CharacterStatus.alive, .dead, .unknown]
-    // Если _status == null, значит ничего не выбрано
     final statuses = CharacterStatus.values;
 
     return Wrap(
@@ -157,12 +153,11 @@ class _CharacterFilterBottomSheetState
   }
 
   void _apply() {
-    // Собираем окончательный фильтр
     final filter = CharacterFilter(
       name: _name?.isNotEmpty == true ? _name : null,
-      status: _status, // null если не выбрано
-      species: _species, // null если не выбрано
-      gender: _gender, // null если не выбрано
+      status: _status,
+      species: _species,
+      gender: _gender,
       type: _type?.isNotEmpty == true ? _type : null,
     );
 

@@ -12,7 +12,6 @@ class CharactersState extends Equatable {
   final CharacterFilter? filter;
   final String? errorMessage;
 
-  // Новое поле: фильтр, по которому мы последний раз УСПЕШНО загрузили данные.
   final CharacterFilter? lastLoadedFilter;
 
   const CharactersState({
