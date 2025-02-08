@@ -22,8 +22,6 @@ class CharacterRemoteDataSource {
 
   CharacterRemoteDataSource(this.dio);
 
-  /// Загрузка конкретной страницы персонажей (по page), с фильтром
-  /// Возвращает [PaginatedCharactersResponse], где есть [info] + [results].
   Future<PaginatedCharactersResponse> getCharacters(int page,
       {CharacterFilter? filter}) async {
     final queryParameters = <String, String>{
@@ -48,24 +46,52 @@ class CharacterRemoteDataSource {
       }
     }
 
-    final response = await dio.get(
-      'https://rickandmortyapi.com/api/character',
-      queryParameters: queryParameters,
-    );
+    try {
+      final response = await dio.get(
+        'https://rickandmortyapi.com/api/character',
+        queryParameters: queryParameters,
+      );
 
-    if (response.statusCode == 200) {
-      final data = response.data as Map<String, dynamic>;
-      final infoMap = data['info'] as Map<String, dynamic>;
-      final info = InfoModel.fromJson(infoMap);
+      // Если код 200 => парсим info+results как раньше
+      if (response.statusCode == 200) {
+        final data = response.data as Map<String, dynamic>;
+        final infoMap = data['info'] as Map<String, dynamic>;
+        final info = InfoModel.fromJson(infoMap);
 
-      final resultsList = data['results'] as List;
-      final characterModels = resultsList.map((item) {
-        return CharacterModel.fromJson(item);
-      }).toList();
+        final resultsList = data['results'] as List;
+        final characterModels = resultsList.map((item) {
+          return CharacterModel.fromJson(item);
+        }).toList();
 
-      return PaginatedCharactersResponse(info: info, results: characterModels);
-    } else {
-      throw Exception('Ошибка при загрузке персонажей: ${response.statusCode}');
+        return PaginatedCharactersResponse(
+            info: info, results: characterModels);
+      } else {
+        // Если код не 200 (напр. 404),
+        // проверим, не вернул ли API поле "error"
+        final data = response.data;
+        if (response.statusCode == 404 &&
+            data is Map &&
+            data["error"] == "There is nothing here") {
+          // Интерпретируем как ПУСТОЙ результат
+          // Сформируем "пустую" info и results
+          final emptyInfo = InfoModel(
+            count: 0,
+            pages: 1,
+            next: null,
+            prev: null,
+          );
+          final emptyResults = <CharacterModel>[];
+          return PaginatedCharactersResponse(
+              info: emptyInfo, results: emptyResults);
+        } else {
+          // Иначе бросаем исключение
+          throw Exception(
+              'Ошибка при загрузке персонажей: ${response.statusCode}');
+        }
+      }
+    } on DioException catch (dioError) {
+      // Сюда попадём, если вообще нет сети или таймаут и т. д.
+      throw Exception('Сетевая ошибка: ${dioError.message}');
     }
   }
 }

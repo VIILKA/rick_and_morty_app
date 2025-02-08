@@ -44,31 +44,88 @@ class EpisodeDetailsScreen extends StatelessWidget {
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16),
         child: Column(
+          children: [
+            _buildMainInfoCard(context, ep),
+            const SizedBox(height: 16),
+            _buildCreatedCard(context, ep),
+            const SizedBox(height: 16),
+            _buildCharactersCard(context, ep),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildMainInfoCard(BuildContext context, ep) {
+    return Card(
+      elevation: 4,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+      child: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text("Эпизод: ${ep.episode}", style: const TextStyle(fontSize: 18)),
+            Text(ep.name,
+                style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                      fontWeight: FontWeight.bold,
+                    )),
             const SizedBox(height: 8),
-            Text("Дата выхода: ${ep.airDate}"),
+            Text("Эпизод: ${ep.episode}",
+                style: Theme.of(context).textTheme.bodyMedium),
             const SizedBox(height: 8),
-            Text("URL: ${ep.url}"),
+            Text("Дата выхода: ${ep.airDate}",
+                style: Theme.of(context).textTheme.bodyMedium),
             const SizedBox(height: 8),
-            Text("Создан: ${ep.created.toLocal()}"),
-            const SizedBox(height: 16),
+            Text("URL: ${ep.url}",
+                style: Theme.of(context).textTheme.bodySmall),
+          ],
+        ),
+      ),
+    );
+  }
 
-            const Text(
-              "Персонажи:",
-              style: TextStyle(fontWeight: FontWeight.bold),
+  Widget _buildCreatedCard(BuildContext context, ep) {
+    return Card(
+      elevation: 3,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+      child: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Row(
+          children: [
+            const Icon(Icons.calendar_today),
+            const SizedBox(width: 8),
+            Text(
+              "Создано: ${ep.created.toLocal()}",
+              style: Theme.of(context).textTheme.bodyMedium,
             ),
-            const SizedBox(height: 8),
+          ],
+        ),
+      ),
+    );
+  }
 
-            // 5. Выводим аватарки персонажей
+  Widget _buildCharactersCard(BuildContext context, ep) {
+    return Card(
+      elevation: 3,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+      child: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              "Персонажи",
+              style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                    fontWeight: FontWeight.bold,
+                  ),
+            ),
+            const SizedBox(height: 12),
             Wrap(
               spacing: 8,
               runSpacing: 8,
-              children: ep.characters.map((charUrl) {
-                // Извлекаем ID
+              children: ep.characters.map<Widget>((charUrl) {
                 final splitted = charUrl.split('/');
-                final charId = splitted.last; // "1", "2", "14" ...
+                final charId = splitted.last;
                 final avatarUrl =
                     "https://rickandmortyapi.com/api/character/avatar/$charId.jpeg";
 

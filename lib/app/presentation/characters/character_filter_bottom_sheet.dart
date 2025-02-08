@@ -89,15 +89,18 @@ class _CharacterFilterBottomSheetState
       children: statuses.map((status) {
         final selected = (_status == status);
         return FilterChip(
-          label: Text(status.toString().split('.').last),
+          label: Text(
+            status.toString().split('.').last,
+            style: TextStyle(
+              color: selected ? Colors.deepPurple : Colors.black,
+            ),
+          ),
+          selectedColor: Colors.deepPurple[100],
+          checkmarkColor: Colors.deepPurple,
           selected: selected,
           onSelected: (bool value) {
             setState(() {
-              if (value) {
-                _status = status; // выбрали этот статус
-              } else {
-                _status = null; // сняли выбор
-              }
+              _status = value ? status : null;
             });
           },
         );

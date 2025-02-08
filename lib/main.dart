@@ -11,6 +11,7 @@ import 'package:rick_and_morty_app/app/presentation/characters/bloc/characters_b
 import 'package:rick_and_morty_app/app/presentation/episodes/bloc/episodes_bloc.dart';
 import 'package:rick_and_morty_app/app/presentation/locations/bloc/locations_bloc.dart';
 import 'package:rick_and_morty_app/core/routes/app_router.dart';
+import 'package:rick_and_morty_app/core/styles/app_theme.dart';
 
 void main() {
   runApp(const MainApp());
@@ -21,7 +22,14 @@ class MainApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final dio = Dio();
+    final dio = Dio(
+      BaseOptions(
+        validateStatus: (status) {
+          // Принимаем любой код < 500
+          return status != null && status < 500;
+        },
+      ),
+    );
     final charDS = CharacterRemoteDataSource(dio);
     final charRepo = CharacterRepositoryImpl(charDS);
     final remoteDS = EpisodeRemoteDataSource(dio);
@@ -39,6 +47,9 @@ class MainApp extends StatelessWidget {
         ),
       ],
       child: MaterialApp.router(
+        theme: AppTheme.light,
+        darkTheme: AppTheme.dark,
+        themeMode: ThemeMode.system,
         title: 'Rick & Morty with GoRouter',
         debugShowCheckedModeBanner: false,
         routerConfig: router, // наш GoRouter

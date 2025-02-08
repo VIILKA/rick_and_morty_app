@@ -1,8 +1,6 @@
-// lib/app/presentation/characters/bloc/characters_state.dart
-
 import 'package:equatable/equatable.dart';
-import 'package:rick_and_morty_app/app/domain/entities/filters/character_filter.dart';
 import '../../../domain/entities/character.dart';
+import '../../../domain/entities/filters/character_filter.dart';
 
 enum CharactersStatus { initial, loading, loadingPage, loaded, empty, error }
 
@@ -14,6 +12,9 @@ class CharactersState extends Equatable {
   final CharacterFilter? filter;
   final String? errorMessage;
 
+  // Новое поле: фильтр, по которому мы последний раз УСПЕШНО загрузили данные.
+  final CharacterFilter? lastLoadedFilter;
+
   const CharactersState({
     required this.status,
     required this.characters,
@@ -21,15 +22,18 @@ class CharactersState extends Equatable {
     required this.hasNextPage,
     required this.filter,
     this.errorMessage,
+    this.lastLoadedFilter,
   });
 
   factory CharactersState.initial() {
-    return CharactersState(
+    return const CharactersState(
       status: CharactersStatus.initial,
-      characters: const [],
+      characters: [],
       page: 1,
       hasNextPage: true,
       filter: null,
+      errorMessage: null,
+      lastLoadedFilter: null,
     );
   }
 
@@ -40,6 +44,7 @@ class CharactersState extends Equatable {
     bool? hasNextPage,
     CharacterFilter? filter,
     String? errorMessage,
+    CharacterFilter? lastLoadedFilter,
   }) {
     return CharactersState(
       status: status ?? this.status,
@@ -48,10 +53,18 @@ class CharactersState extends Equatable {
       hasNextPage: hasNextPage ?? this.hasNextPage,
       filter: filter ?? this.filter,
       errorMessage: errorMessage,
+      lastLoadedFilter: lastLoadedFilter ?? this.lastLoadedFilter,
     );
   }
 
   @override
-  List<Object?> get props =>
-      [status, characters, page, hasNextPage, filter, errorMessage];
+  List<Object?> get props => [
+        status,
+        characters,
+        page,
+        hasNextPage,
+        filter,
+        errorMessage,
+        lastLoadedFilter,
+      ];
 }

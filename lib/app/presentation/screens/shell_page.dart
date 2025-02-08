@@ -5,7 +5,7 @@ import 'package:go_router/go_router.dart';
 
 class ShellPage extends StatefulWidget {
   final Widget child;
-  const ShellPage({Key? key, required this.child}) : super(key: key);
+  const ShellPage({super.key, required this.child});
 
   @override
   State<ShellPage> createState() => _ShellPageState();
@@ -31,12 +31,14 @@ class _ShellPageState extends State<ShellPage> {
     return Scaffold(
       body: widget.child,
       bottomNavigationBar: BottomNavigationBar(
+        backgroundColor: const Color.fromARGB(255, 0, 7, 78),
         currentIndex: _currentIndex,
         onTap: (index) => context.go(_tabs[index]),
         items: const [
           BottomNavigationBarItem(icon: Icon(Icons.person), label: 'Герои'),
           BottomNavigationBarItem(icon: Icon(Icons.movie), label: 'Эпизоды'),
-          BottomNavigationBarItem(icon: Icon(Icons.location_on), label: 'Локации'),
+          BottomNavigationBarItem(
+              icon: Icon(Icons.location_on), label: 'Локации'),
         ],
       ),
     );

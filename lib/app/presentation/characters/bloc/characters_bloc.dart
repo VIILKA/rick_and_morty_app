@@ -1,5 +1,3 @@
-// lib/app/presentation/characters/bloc/characters_bloc.dart
-
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'characters_event.dart';
 import 'characters_state.dart';
@@ -18,13 +16,17 @@ class CharactersBloc extends Bloc<CharactersEvent, CharactersState> {
     LoadCharactersEvent event,
     Emitter<CharactersState> emit,
   ) async {
-    // 1. Если уже есть данные, не перезагружаем заново:
+    // 1. Проверяем: если уже в статусе loaded + не пусто,
+    //   и lastLoadedFilter == filter, значит мы уже загружали
+    //   под этот фильтр - повторную загрузку пропускаем
     if (state.status == CharactersStatus.loaded &&
-        state.characters.isNotEmpty) {
+        state.characters.isNotEmpty &&
+        state.filter == state.lastLoadedFilter) {
       return;
     }
 
     try {
+      // Иначе грузим
       emit(state.copyWith(
         status: CharactersStatus.loading,
         characters: [],
@@ -44,6 +46,7 @@ class CharactersBloc extends Bloc<CharactersEvent, CharactersState> {
           page: 1,
           hasNextPage: false,
           characters: [],
+          // lastLoadedFilter не обновляем, так как ничего не загрузили
         ));
       } else {
         // Иначе обновляем state
@@ -52,6 +55,8 @@ class CharactersBloc extends Bloc<CharactersEvent, CharactersState> {
           page: 1,
           hasNextPage: hasNext,
           characters: results,
+          // Здесь мы фиксируем, что мы УСПЕШНО загрузили под этим filter
+          lastLoadedFilter: state.filter,
         ));
       }
     } catch (e) {
@@ -98,6 +103,9 @@ class CharactersBloc extends Bloc<CharactersEvent, CharactersState> {
           page: nextPage,
           hasNextPage: hasNext,
           characters: updated,
+          // lastLoadedFilter уже совпадает со state.filter
+          // Но можно и заново установить:
+          lastLoadedFilter: state.filter,
         ));
       }
     } catch (e) {
@@ -112,9 +120,9 @@ class CharactersBloc extends Bloc<CharactersEvent, CharactersState> {
     ApplyFilterEvent event,
     Emitter<CharactersState> emit,
   ) async {
-    // Запоминаем фильтр
+    // Запоминаем новый фильтр
     emit(state.copyWith(filter: event.filter));
-    // Перезапускаем загрузку с 1-й страницы
+    // Перезапускаем загрузку (page=1)
     add(LoadCharactersEvent());
   }
 }

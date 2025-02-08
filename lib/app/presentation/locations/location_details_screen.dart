@@ -48,45 +48,106 @@ class LocationDetailsScreen extends StatelessWidget {
     }
 
     // 4. Показываем детальное описание
+
     return Scaffold(
-      appBar: AppBar(
-        title: Text(loc.name),
-      ),
+      appBar: AppBar(title: Text(loc.name)),
       body: SingleChildScrollView(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          children: [
+            _buildMainInfoCard(context, loc),
+            const SizedBox(height: 16),
+            _buildCreatedCard(context, loc),
+            const SizedBox(height: 16),
+            _buildResidentsCard(context, loc),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildMainInfoCard(BuildContext context, Location loc) {
+    return Card(
+      elevation: 4,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+      child: Padding(
         padding: const EdgeInsets.all(16),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text("Тип: ${loc.type}", style: const TextStyle(fontSize: 16)),
+            Text(loc.name,
+                style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                      fontWeight: FontWeight.bold,
+                    )),
             const SizedBox(height: 8),
-            Text("Измерение: ${loc.dimension}"),
+            Text("Тип: ${loc.type}",
+                style: Theme.of(context).textTheme.bodyMedium),
             const SizedBox(height: 8),
-            Text("URL: ${loc.url}"),
+            Text("Измерение: ${loc.dimension}",
+                style: Theme.of(context).textTheme.bodyMedium),
             const SizedBox(height: 8),
-            Text("Создано: ${loc.created.toLocal()}"),
-            const SizedBox(height: 16),
+            Text("URL: ${loc.url}",
+                style: Theme.of(context).textTheme.bodySmall),
+          ],
+        ),
+      ),
+    );
+  }
 
-            const Text("Резиденты:",
-                style: TextStyle(fontWeight: FontWeight.bold)),
-            const SizedBox(height: 8),
-            // Выводим список жителей
-            Wrap(
-              spacing: 8,
-              runSpacing: 8,
-              children: loc.residents.map((charUrl) {
-                // Извлекаем ID
-                final splitted = charUrl.split('/');
-                final charId = splitted.last; // "1", "2", "14" ...
-                final avatarUrl =
-                    "https://rickandmortyapi.com/api/character/avatar/$charId.jpeg";
-
-                return CircleAvatar(
-                  radius: 30,
-                  backgroundColor: Colors.grey[300],
-                  backgroundImage: CachedNetworkImageProvider(avatarUrl),
-                );
-              }).toList(),
+  Widget _buildCreatedCard(BuildContext context, Location loc) {
+    return Card(
+      elevation: 3,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+      child: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Row(
+          children: [
+            const Icon(Icons.calendar_today),
+            const SizedBox(width: 8),
+            Text(
+              "Создано: ${loc.created.toLocal()}",
+              style: Theme.of(context).textTheme.bodyMedium,
             ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildResidentsCard(BuildContext context, Location loc) {
+    return Card(
+      elevation: 3,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+      child: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              "Резиденты",
+              style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                    fontWeight: FontWeight.bold,
+                  ),
+            ),
+            const SizedBox(height: 12),
+            if (loc.residents.isEmpty) const Text("Нет жителей"),
+            if (loc.residents.isNotEmpty)
+              Wrap(
+                spacing: 8,
+                runSpacing: 8,
+                children: loc.residents.map((charUrl) {
+                  final splitted = charUrl.split('/');
+                  final charId = splitted.last;
+                  final avatarUrl =
+                      "https://rickandmortyapi.com/api/character/avatar/$charId.jpeg";
+
+                  return CircleAvatar(
+                    radius: 30,
+                    backgroundColor: Colors.grey[300],
+                    backgroundImage: CachedNetworkImageProvider(avatarUrl),
+                  );
+                }).toList(),
+              ),
           ],
         ),
       ),

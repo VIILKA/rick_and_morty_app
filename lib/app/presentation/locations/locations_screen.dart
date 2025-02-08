@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+
 import 'package:rick_and_morty_app/app/domain/entities/location.dart';
 import 'bloc/locations_bloc.dart';
 import 'bloc/locations_event.dart';
@@ -46,12 +47,14 @@ class _LocationsScreenState extends State<LocationsScreen> {
           switch (state.status) {
             case LocationsStatus.loading:
               return const Center(child: CircularProgressIndicator());
+
             case LocationsStatus.error:
               return Center(
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Text("Ошибка: ${state.errorMessage}"),
+                    const SizedBox(height: 12),
                     ElevatedButton(
                       onPressed: () {
                         context.read<LocationsBloc>().add(LoadLocationsEvent());
@@ -61,14 +64,20 @@ class _LocationsScreenState extends State<LocationsScreen> {
                   ],
                 ),
               );
+
             case LocationsStatus.empty:
               return const Center(child: Text("Нет результатов"));
+
             case LocationsStatus.loaded:
             case LocationsStatus.loadingPage:
-              return _buildList(
+              final isLoadingPage =
+                  (state.status == LocationsStatus.loadingPage);
+              return _buildAdaptiveLayout(
+                context,
                 locations: state.locations,
-                isLoadingPage: state.status == LocationsStatus.loadingPage,
+                isLoadingPage: isLoadingPage,
               );
+
             default:
               return const SizedBox.shrink();
           }
@@ -77,33 +86,103 @@ class _LocationsScreenState extends State<LocationsScreen> {
     );
   }
 
-  Widget _buildList({
+  /// Показываем либо Grid, если экран широкий, либо List, если узкий.
+  Widget _buildAdaptiveLayout(
+    BuildContext context, {
     required List<Location> locations,
     required bool isLoadingPage,
   }) {
+    final width = MediaQuery.of(context).size.width;
+    final bool isWide = width > 600; // можно подбирать порог
+
+    if (isWide) {
+      return _buildGrid(context, locations, isLoadingPage);
+    } else {
+      return _buildList(context, locations, isLoadingPage);
+    }
+  }
+
+  /// Сетка (2 колонки) для широких экранов
+  Widget _buildGrid(
+      BuildContext context, List<Location> locations, bool isLoadingPage) {
+    return GridView.builder(
+      controller: _scrollController,
+      padding: const EdgeInsets.all(16),
+      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+        crossAxisCount: 2,
+        crossAxisSpacing: 16,
+        mainAxisSpacing: 16,
+        childAspectRatio: 2.5, // настраивайте под желаемые пропорции
+      ),
+      itemCount: locations.length + (isLoadingPage ? 1 : 0),
+      itemBuilder: (context, index) {
+        // Если это догрузочный элемент
+        if (index >= locations.length) {
+          return const Center(child: CircularProgressIndicator());
+        }
+
+        final loc = locations[index];
+        return _buildLocationCard(context, loc);
+      },
+    );
+  }
+
+  /// Вертикальный список для узких экранов
+  Widget _buildList(
+      BuildContext context, List<Location> locations, bool isLoadingPage) {
     return ListView.builder(
       controller: _scrollController,
-      itemCount: locations.length + 1,
+      padding: const EdgeInsets.all(8),
+      itemCount: locations.length + (isLoadingPage ? 1 : 0),
       itemBuilder: (context, index) {
         if (index < locations.length) {
           final loc = locations[index];
-          return ListTile(
-            title: Text(loc.name),
-            subtitle: Text("${loc.type} | ${loc.dimension}"),
-            onTap: () {
-              context.go('/locations/details/${loc.id}');
-            },
+          return Padding(
+            padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 8),
+            child: _buildLocationCard(context, loc),
           );
         } else {
-          if (isLoadingPage) {
-            return const Padding(
-              padding: EdgeInsets.all(16.0),
-              child: Center(child: CircularProgressIndicator()),
-            );
-          }
-          return const SizedBox.shrink();
+          return const Padding(
+            padding: EdgeInsets.all(16.0),
+            child: Center(child: CircularProgressIndicator()),
+          );
         }
       },
+    );
+  }
+
+  /// Карточка локации
+  Widget _buildLocationCard(BuildContext context, Location loc) {
+    return Card(
+      elevation: 3,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+      child: InkWell(
+        borderRadius: BorderRadius.circular(12),
+        onTap: () {
+          context.go('/locations/details/${loc.id}');
+        },
+        child: Padding(
+          padding: const EdgeInsets.all(16),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                loc.name,
+                style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                      fontWeight: FontWeight.bold,
+                    ),
+              ),
+              const SizedBox(height: 6),
+              Text(
+                "${loc.type} | ${loc.dimension}",
+                style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                      color: Colors.grey[700],
+                    ),
+              ),
+            ],
+          ),
+        ),
+      ),
     );
   }
 
